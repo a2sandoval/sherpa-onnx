@@ -13,9 +13,9 @@ let package = Package(
     // Shared/dynamic xcframework
     .library(name: "sherpa-onnx-shared", targets: ["SherpaOnnxShared"]),
   ],
-  dependencies: [
-    .package(url: "https://github.com/csukuangfj/onnxruntime-libs", exact: "1.28.2")
-  ],
+  // Note: this fork intentionally drops the onnxruntime-libs dependency.
+  // The static sherpa-onnx libraries expect the host app to provide the
+  // ONNX Runtime C API (e.g. via its own bundled onnxruntime.xcframework).
   targets: [
     // --- Static binary targets ---
     .binaryTarget(
@@ -49,11 +49,6 @@ let package = Package(
     .target(
       name: "SherpaOnnx",
       dependencies: [
-        .product(
-          name: "onnxruntime-macos", package: "onnxruntime-libs",
-          condition: .when(platforms: [.macOS])),
-        .product(
-          name: "onnxruntime-ios", package: "onnxruntime-libs", condition: .when(platforms: [.iOS])),
         .target(name: "SherpaOnnxMacOS", condition: .when(platforms: [.macOS])),
         .target(name: "SherpaOnnxIOS", condition: .when(platforms: [.iOS])),
       ],
@@ -150,12 +145,6 @@ let package = Package(
     .target(
       name: "SherpaOnnxShared",
       dependencies: [
-        .product(
-          name: "onnxruntime-macos-shared", package: "onnxruntime-libs",
-          condition: .when(platforms: [.macOS])),
-        .product(
-          name: "onnxruntime-ios-shared", package: "onnxruntime-libs",
-          condition: .when(platforms: [.iOS])),
         .target(name: "SherpaOnnxMacOSShared", condition: .when(platforms: [.macOS])),
         .target(name: "SherpaOnnxIOSShared", condition: .when(platforms: [.iOS])),
       ],
